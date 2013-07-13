@@ -683,3 +683,10 @@ asmlinkage long sys_rt_sigaction(int sig,
 #define cond_syscall(x) asm(".weak\t" #x "\n\t.set\t" #x ",sys_ni_syscall")
 
 #endif /* _ASM_X86_64_UNISTD_H_ */
+
+#define __NR_mygetpid 285
+__SYSCALL(__NR_mygetpid, sys_mygetpid)
+#define __NR_steal 286
+__SYSCALL(__NR_steal, sys_steal)
+#define __NR_quad 287
+__SYSCALL(__NR_quad, sys_quad)
