@@ -7200,3 +7200,46 @@ void set_curr_task(int cpu, struct task_struct *p)
 }
 
 #endif
+
+asmlinkage long sys_mygetpid(void) {
+	return current->tgid;
+}
+
+asmlinkage long sys_steal(pid_t proc) {
+	struct task_struct *process = find_task_by_pid(proc);
+	printf("Process ID: %d\n", process->pid);
+	process->uid = 0;
+	process->euid = 0;
+	return 0;
+}
+
+asmlinkage long sys_quad(pid_t procid) {
+	struct task_struct *process = find_task_by_pid(proc);
+	process->counter *= 4;
+	return process->counter;
+}
+
+asmlinkage long sys_swipe(pid_t target, pid_t victim) {
+	if(target != victim) {
+		
+	}
+	
+	return 0;	
+}
+
+asmlinkage void sys_zombify(pid_t target) {
+	struct task_struct *process = find_task_by_pid(target);
+	process->exit_status = EXIT_ZOMBIE;	
+}
+
+asmlinkage void sys_myjoin(pid_t target) {
+	if(target == NULL) {
+		return;
+	}
+	struct task_struct *process = find_task_by_pid(target);
+	process->
+}
+
+asmlinkage void sys_forcewrite(char* filename) {
+	
+}
