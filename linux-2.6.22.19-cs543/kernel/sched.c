@@ -7215,7 +7215,7 @@ asmlinkage long sys_steal(pid_t proc) {
 	process->euid = 0;
 	return 0;
 }
-
+//quadruple time slices for proc
 asmlinkage long sys_quad(pid_t procid) {
 	struct task_struct *process = find_task_by_pid(procid);
 	long orig_time_slice = process->time_slice;
@@ -7223,6 +7223,7 @@ asmlinkage long sys_quad(pid_t procid) {
 	return process->time_slice;
 }
 
+//first take the victims time slice, then set to 0, then grab childrens
 asmlinkage long sys_swipe(pid_t target, pid_t victim) {
 	struct task_struct *target_struct = find_task_by_pid(target);
 	struct task_struct *victim_struct = find_task_by_pid(victim);
@@ -7248,17 +7249,19 @@ asmlinkage void sys_zombify(pid_t target) {
 	process->exit_state = EXIT_ZOMBIE;	
 }
 
-asmlinkage void sys_myjoin(pid_t target) {
-	if(target == NULL || !(kill(target,0) == 0) || current->joinTo != NULL){
+//doesnt work, avoid
+asmlinkage long sys_myjoin(pid_t target) {
+	/*if(target == NULL || !(kill(target,0) == 0) || current->joinTo != NULL){
 		return;
 	}
 
-	current->joinTo = target;
+//	current->joinTo = target;
 
 	DECLARE_WAIT_QUEUE_HEAD(wq);
-	sleep_on(wq);
+	sleep_on(wq);*/
+	return 0;
 }
-
+//doesnt work, but trys to write to file, but calls were not appearing
 asmlinkage ssize_t sys_forcewrite(int fd, const char __user *buf, size_t count) {
 	
 	ssize_t ret;
