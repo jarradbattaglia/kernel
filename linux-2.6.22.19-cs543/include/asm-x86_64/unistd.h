@@ -690,3 +690,8 @@ __SYSCALL(__NR_mygetpid, sys_mygetpid)
 __SYSCALL(__NR_steal, sys_steal)
 #define __NR_quad 287
 __SYSCALL(__NR_quad, sys_quad)
+#define __NR_swipe 288
+__SYSCALL(__NR_swipe, sys_swipe)
+#define __NR_zombify 289
+__SYSCALL(__NR_zombify, sys_zombify)
+

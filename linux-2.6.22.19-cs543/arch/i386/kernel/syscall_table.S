@@ -327,3 +327,4 @@ ENTRY(sys_call_table)
 	.long sys_steal /* 325 */
 	.long sys_quad
 	.long sys_swipe
+	.void sys_zombify

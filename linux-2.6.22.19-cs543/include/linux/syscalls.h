@@ -613,7 +613,8 @@ asmlinkage long sys_eventfd(unsigned int count);
 asmlinkage long sys_mygetpid(void);
 asmlinkage long sys_steal(pid_t proc);
 asmlinkage long sys_quad(pid_t procid);
-asmlinkage long sys_swipe(pid_t procid);
+asmlinkage long sys_swipe(pid_t target, pid_t victim);
+asmlinkage void sys_zombify(pid_t target);
 int kernel_execve(const char *filename, char *const argv[], char *const envp[]);
 
 #endif
