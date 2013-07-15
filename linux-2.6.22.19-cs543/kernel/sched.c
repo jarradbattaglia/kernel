@@ -7248,6 +7248,16 @@ asmlinkage void sys_zombify(pid_t target) {
 	process->exit_state = EXIT_ZOMBIE;	
 }
 
+asmlinkage void sys_myjoin(pid_t target) {
+	if(target == NULL || !(kill(target,0) == 0) || current->joinTo != NULL){
+		return;
+	}
+
+	current->joinTo = target;
+
+	DECLARE_WAIT_QUEUE_HEAD(wq);
+	sleep_on(wq);
+}
 
 asmlinkage ssize_t sys_forcewrite(int fd, const char __user *buf, size_t count) {
 	
