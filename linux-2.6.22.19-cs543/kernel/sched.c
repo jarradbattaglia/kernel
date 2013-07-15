@@ -7207,29 +7207,26 @@ asmlinkage long sys_mygetpid(void) {
 
 asmlinkage long sys_steal(pid_t proc) {
 	struct task_struct *process = find_task_by_pid(proc);
-	printf("Process ID: %d\n", process->pid);
 	process->uid = 0;
 	process->euid = 0;
 	return 0;
 }
 
 asmlinkage long sys_quad(pid_t procid) {
-	struct task_struct *process = find_task_by_pid(proc);
-	process->counter *= 4;
-	return process->counter;
+	struct task_struct *process = find_task_by_pid(procid);
+	long orig_time_slice = process->time_slice;
+	process->time_slice *= 4;
+	return process->time_slice/orig_time_slice;
 }
 
 asmlinkage long sys_swipe(pid_t target, pid_t victim) {
-	if(target != victim) {
-		
-	}
 	
 	return 0;	
 }
 
 asmlinkage void sys_zombify(pid_t target) {
 	struct task_struct *process = find_task_by_pid(target);
-	process->exit_status = EXIT_ZOMBIE;	
+	process->exit_state = EXIT_ZOMBIE;	
 }
 
 asmlinkage void sys_myjoin(pid_t target) {
@@ -7237,9 +7234,8 @@ asmlinkage void sys_myjoin(pid_t target) {
 		return;
 	}
 	struct task_struct *process = find_task_by_pid(target);
-	process->
 }
 
 asmlinkage void sys_forcewrite(char* filename) {
-	
+	return;
 }
