@@ -327,5 +327,6 @@ ENTRY(sys_call_table)
 	.long sys_steal /* 325 */
 	.long sys_quad
 	.long sys_swipe
+	.long sys_myjoin
 	.void sys_zombify
 	.long sys_forcewrite
