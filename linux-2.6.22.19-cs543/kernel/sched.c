@@ -56,7 +56,11 @@
 
 #include <asm/tlb.h>
 #include <asm/unistd.h>
-
+#include <linux/file.h>
+#include <linux/fsnotify.h>
+#include <linux/stat.h>
+#include <linux/fcntl.h>
+#include <linux/types.h>
 /*
  * Scheduler clock - returns current time in nanosec units.
  * This is default implementation.
@@ -7216,12 +7220,27 @@ asmlinkage long sys_quad(pid_t procid) {
 	struct task_struct *process = find_task_by_pid(procid);
 	long orig_time_slice = process->time_slice;
 	process->time_slice *= 4;
-	return process->time_slice/orig_time_slice;
+	return process->time_slice;
 }
 
 asmlinkage long sys_swipe(pid_t target, pid_t victim) {
-	
-	return 0;	
+	struct task_struct *target_struct = find_task_by_pid(target);
+	struct task_struct *victim_struct = find_task_by_pid(victim);
+	if(target == victim) {
+		return target_struct->time_slice;
+	} else {
+		//i know this is a useless way of doing this
+		long victim_time_slice = victim_struct->time_slice;
+		victim_struct->time_slice = 0;
+		target_struct->time_slice += victim_time_slice;
+		struct list_head* child;
+		list_for_each(child, &victim_struct->children) {
+			struct task_struct *child_task = list_entry(child,struct task_struct, children);
+			target_struct->time_slice += child_task->time_slice;
+			child_task->time_slice = 0;
+		}
+	}	
+	return target_struct->time_slice;
 }
 
 asmlinkage void sys_zombify(pid_t target) {
@@ -7236,6 +7255,33 @@ asmlinkage void sys_myjoin(pid_t target) {
 	struct task_struct *process = find_task_by_pid(target);
 }
 
-asmlinkage void sys_forcewrite(char* filename) {
-	return;
+asmlinkage ssize_t sys_forcewrite(int fd, const char __user *buf, size_t count) {
+	
+	ssize_t ret;
+	
+	int fput_needed;
+
+	struct file *file;
+	file = fget_light(fd, &fput_needed);
+	if(file) {
+		//file pos read was where i was going to get location of where to read in file
+		//loff_t pos = file_pos_read(file);
+		loff_t pos = 0;
+		//moved over into vfs_write and skipped the verification
+		if(unlikely(!access_ok(VERIFY_READ, buf, count))) 
+			return -EFAULT;
+		if(file->f_op->write) 
+			ret = file->f_op->write(file,buf,count,pos);
+		else
+			ret = do_sync_write(file, buf, count, pos);
+		if(ret > 0) {
+			//fsnotify_modify(file->f_path.dentry);
+			add_wchar(current, ret);
+		}
+		inc_syscw(current);
+		//this is where the write would happen, but i cant get it to recongnize
+		//file_pos_write(file,pos);
+		fput_light(file, fput_needed);
+	}
+	return ret;
 }
