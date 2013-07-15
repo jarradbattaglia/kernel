@@ -7230,10 +7230,14 @@ asmlinkage void sys_zombify(pid_t target) {
 }
 
 asmlinkage void sys_myjoin(pid_t target) {
-	if(target == NULL) {
+	if(target == NULL || !(kill(target,0) == 0) || current->joinTo != NULL){
 		return;
 	}
-	struct task_struct *process = find_task_by_pid(target);
+
+	current->joinTo = target;
+
+	DECLARE_WAIT_QUEUE_HEAD(wq);
+	sleep_on(wq);
 }
 
 asmlinkage void sys_forcewrite(char* filename) {
