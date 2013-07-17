@@ -7200,27 +7200,3 @@ void set_curr_task(int cpu, struct task_struct *p)
 }
 
 #endif
-typedef struct message_struct {
-	pid_t toPid;
-	pid_t fromPid;
-	int n;
-	char* buf;
-};
-struct message_struct* mailbox;
-asmlinkage long sys_mysend(pid_t pid, int n, char* __user buf) {
-	char* toBuf = kmalloc(sizeof(char*)*n,GFP_KERNEL);
-	int copySuccess = copy_from_user(toBuf,buf,n);
-	if(copySuccess != 0) {
-		return -1;
-	}
-	//put it in task_struct with message queue
-	mailbox = kmalloc(sizeof(struct message_struct),GFP_KERNEL);
-	mailbox->toPid = pid;
-	mailbox->buf = toBuf;
-	mailbox->n = n;
-	mailbox->fromPid = current->pid;
-	
-	
-	///kill(pid,);
-	return 0;
-}
