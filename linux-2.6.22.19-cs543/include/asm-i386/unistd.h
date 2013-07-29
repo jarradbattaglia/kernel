@@ -330,6 +330,8 @@
 #define __NR_timerfd		322
 #define __NR_eventfd		323
 
+#define __NR_myreceive 324
+
 #ifdef __KERNEL__
 
 #define NR_syscalls 324

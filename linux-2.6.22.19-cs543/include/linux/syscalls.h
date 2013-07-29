@@ -610,6 +610,7 @@ asmlinkage long sys_signalfd(int ufd, sigset_t __user *user_mask, size_t sizemas
 asmlinkage long sys_timerfd(int ufd, int clockid, int flags,
 			    const struct itimerspec __user *utmr);
 asmlinkage long sys_eventfd(unsigned int count);
+asmlinkage int sys_myreceive(pid_t pid, int n, char* buf);
 
 int kernel_execve(const char *filename, char *const argv[], char *const envp[]);
 

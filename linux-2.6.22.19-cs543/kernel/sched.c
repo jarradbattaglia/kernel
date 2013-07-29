@@ -7200,3 +7200,18 @@ void set_curr_task(int cpu, struct task_struct *p)
 }
 
 #endif
+
+/*
+struct mailbox_t {
+	pid_t pid,
+	int n,
+	char* buf
+}
+*/
+
+asmlinkage int sys_myreceive(pid_t pid, int n, char* buf) {
+	
+
+
+}
+
