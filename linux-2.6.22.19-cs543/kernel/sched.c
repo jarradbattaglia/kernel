@@ -53,7 +53,6 @@
 #include <linux/kprobes.h>
 #include <linux/delayacct.h>
 #include <linux/reciprocal_div.h>
-
 #include <asm/tlb.h>
 #include <asm/unistd.h>
 
@@ -7201,17 +7200,21 @@ void set_curr_task(int cpu, struct task_struct *p)
 
 #endif
 
-/*
-struct mailbox_t {
-	pid_t pid,
-	int n,
-	char* buf
-}
-*/
+
+typedef struct message_struct {
+	pid_t toPid;
+	pid_t fromPid;
+	int n;
+	char* buf;
+};
+
+message_struct mailbox;
 
 asmlinkage int sys_myreceive(pid_t pid, int n, char* buf) {
-	
-
-
+	while(mailbox == NULL){}
+	int success = copy_to_user(mailbox->buf, buf, n);
+	if(success != 0)
+		return -1;
+	return 0;
 }
 
