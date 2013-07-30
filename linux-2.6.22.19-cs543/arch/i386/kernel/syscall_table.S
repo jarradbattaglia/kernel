@@ -324,3 +324,4 @@ ENTRY(sys_call_table)
 	.long sys_timerfd
 	.long sys_eventfd
 	.long sys_myreceive
+	.long sys_mysend

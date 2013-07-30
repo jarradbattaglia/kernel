@@ -630,7 +630,10 @@ __SYSCALL(__NR_signalfd, sys_signalfd)
 __SYSCALL(__NR_timerfd, sys_timerfd)
 #define __NR_eventfd		284
 __SYSCALL(__NR_eventfd, sys_eventfd)
-
+#define __NR_myreceive 		285
+__SYSCALL(__NR_myreceive, sys_myreceive)
+#define __NR_mysend		286
+__SYSCALL(__NR_mysend, sys_mysend)
 #ifndef __NO_STUBS
 #define __ARCH_WANT_OLD_READDIR
 #define __ARCH_WANT_OLD_STAT

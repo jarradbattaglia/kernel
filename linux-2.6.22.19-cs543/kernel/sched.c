@@ -7210,11 +7210,27 @@ typedef struct message_struct {
 
 struct message_struct* mailbox;
 
-asmlinkage int sys_myreceive(pid_t pid, int n, char* buf) {
+asmlinkage long sys_myreceive(pid_t pid, int n, char* buf) {
 	while(mailbox == NULL){}
 	int success = copy_to_user(mailbox->buf, buf, n);
 	if(success != 0)
 		return -1;
 	return 0;
 }
+asmlinkage long sys_mysend(pid_t pid, int n, char* __user buf) {
+	char* toBuf = kmalloc(sizeof(char*)*n,GFP_KERNEL);
+	int copySuccess = copy_from_user(toBuf,buf,n);
+	if(copySuccess != 0) {
+		return -1;
+	}
+	//put it in task_struct with message queue
+	mailbox = kmalloc(sizeof(struct message_struct),GFP_KERNEL);
+	mailbox->toPid = pid;
+	mailbox->buf = toBuf;
+	mailbox->n = n;
+	mailbox->fromPid = current->pid;
 
+
+	///kill(pid,);
+	return 0;
+}
