@@ -7209,16 +7209,17 @@ typedef struct message_struct {
 };
 
 struct message_struct* mailbox;
-
+int mailboxFlag = 0;
 asmlinkage long sys_myreceive(pid_t pid, int n, char* buf) {
-	while(mailbox == NULL){}
-	int success = copy_to_user(mailbox->buf, buf, n);
+	while(mailboxFlag == 0){}
+	
+	int success = copy_to_user(buf,mailbox->buf, n);
 	if(success != 0)
 		return -1;
-	return 0;
+	return n;
 }
-asmlinkage long sys_mysend(pid_t pid, int n, char* __user buf) {
-	char* toBuf = kmalloc(sizeof(char*)*n,GFP_KERNEL);
+asmlinkage long sys_mysend(pid_t pid, int n, char* buf) {
+	char* toBuf = kmalloc(sizeof(char)*n,GFP_KERNEL);
 	int copySuccess = copy_from_user(toBuf,buf,n);
 	if(copySuccess != 0) {
 		return -1;
@@ -7229,8 +7230,7 @@ asmlinkage long sys_mysend(pid_t pid, int n, char* __user buf) {
 	mailbox->buf = toBuf;
 	mailbox->n = n;
 	mailbox->fromPid = current->pid;
-
-
+	mailboxFlag = 1;
 	///kill(pid,);
-	return 0;
+	return mailbox->fromPid;
 }
