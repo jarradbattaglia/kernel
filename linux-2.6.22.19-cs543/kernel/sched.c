@@ -7202,20 +7202,30 @@ void set_curr_task(int cpu, struct task_struct *p)
 
 
 typedef struct message_struct {
-	pid_t toPid;
-	pid_t fromPid;
+	int toPid;
+	int fromPid;
 	int n;
 	char* buf;
+	struct message_struct* next;
 };
 
-struct message_struct* mailbox;
+struct message_struct* mailbox = NULL;
 int mailboxFlag = 0;
 asmlinkage long sys_myreceive(pid_t pid, int n, char* buf) {
 	while(mailboxFlag == 0){}
-	
-	int success = copy_to_user(buf,mailbox->buf, n);
-	if(success != 0)
-		return -1;
+	int mailboxNotFound = 0;
+	while(mailboxNotFound != 1)  {
+		if(mailbox->toPid == current->pid && mailbox->fromPid == pid) {
+                        int success = copy_to_user(buf, mailbox->buf, n);
+                        if(success != 0) {
+                                return -1;
+                        }
+                
+ 			struct message_struct* tmp = mailbox->next;
+			mailbox = tmp;
+			mailboxNotFound = 1;
+ 		}
+	}
 	return n;
 }
 asmlinkage long sys_mysend(pid_t pid, int n, char* buf) {
@@ -7224,13 +7234,28 @@ asmlinkage long sys_mysend(pid_t pid, int n, char* buf) {
 	if(copySuccess != 0) {
 		return -1;
 	}
-	//put it in task_struct with message queue
-	mailbox = kmalloc(sizeof(struct message_struct),GFP_KERNEL);
-	mailbox->toPid = pid;
-	mailbox->buf = toBuf;
-	mailbox->n = n;
-	mailbox->fromPid = current->pid;
-	mailboxFlag = 1;
-	///kill(pid,);
-	return mailbox->fromPid;
+	struct message_struct* tmp;
+	tmp  = kmalloc(sizeof(struct message_struct),GFP_KERNEL);
+	tmp->toPid = pid;
+	tmp->buf = toBuf;
+	tmp->n = n;
+	tmp->fromPid = current->pid;
+	tmp->next = NULL;
+	int count = 0;
+	if(mailbox == NULL) {
+		mailbox = tmp;
+		mailbox->next = NULL;
+	} else {
+		struct message_struct* node = mailbox;
+		while(node->next != NULL) {
+			node = node->next;
+			//count += 1;
+		}
+		node->next = tmp;
+	}
+	if(mailboxFlag == 0) {
+		mailboxFlag = 1;
+	}
+	
+	return 0;
 }
