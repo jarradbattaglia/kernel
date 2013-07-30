@@ -7208,7 +7208,7 @@ typedef struct message_struct {
 	char* buf;
 };
 
-message_struct mailbox;
+struct message_struct* mailbox;
 
 asmlinkage int sys_myreceive(pid_t pid, int n, char* buf) {
 	while(mailbox == NULL){}
