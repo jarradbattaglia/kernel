@@ -1,0 +1,23 @@
+EC1 - Filesystem support 
+August 28, 2013
+Jarrad Battaglia
+Jared Roberts
+
+Modified files:
+fatproject.c
+
+Git repo:
+https://github.com/maddchickenz/kernel
+
+Production:
+Code was written and compiled on TUX and on a local machine.
+
+Testing:
+Include the "samplefat.bin" file in the same directory. Compile and run with:
+gcc -std=c99 fatproject.c -o fat; ./fat
+
+Code implementation:
+A struct is created to parse the header of the FAT binary. The file is read and then the information is allocated to that struct. The information about the FAT system is then output.
+
+Difficulties:
+It wasn't exactly clear where the FAT and file entries were stored from the documentation. While the structures were defined well, actually locating them was difficult. Also, we weren't exactly sure when something should be parsed via big or little endian.
