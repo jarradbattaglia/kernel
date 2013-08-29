@@ -1,0 +1,18 @@
+Jarrad Battaglia
+Jared Roberts 
+
+Wiki page can be found here
+
+https://github.com/maddchickenz/kernel
+
+to clone repo do 
+git clone https://github.com/maddchickenz/kernel.git and use your user name and password
+
+Notes:
+Did not have time to write the filesystem. Was helping work on the two projects (EC1 and P5) at same time and hindered work on P5.  
+
+But the user program works which will read a tar file and its headers and then will extract those files to the directory that it is running from.  
+
+To run that file type ./a.out tar_test.tar
+
+And there were some difficulties with the file in that it did not read the second file at all.  I was counting the nulls that it receives when it goes from each offset to file contents and could not get it to work correctly.  But for most part extracts them fine.
